@@ -5,21 +5,28 @@
 
 > Async iterable class
 
-background details relevant to understanding what this module does
+AsyncIterable is a class that implement the `async iterable` JavaScript pattern,
+using a semantic similar to the promise one.
 
 ## Usage
 
-description of the example
+Create an async iterable that emit three numbers:
 
 ```js
-const asynciterable = require('asynciterable');
+import AsyncIterable from 'asynciterable';
 
-console.log({asynciterable});
-```
+const numbers = new AsyncIterable((write, end, error) => {
+  write(1);
+  write(2);
+  write(3);
+  end();
+});
 
-This will output
+for await (const n of numbers) {
+  console.log(n)
+}
 
-```
+// Output: 1\n2\n3\n
 ```
 
 ## API
@@ -34,9 +41,8 @@ npm install --save asynciterable
 
 ## See Also
 
-- [`noffle/common-readme`](https://github.com/noffle/common-readme)
+* [`noffle/common-readme`](https://github.com/noffle/common-readme)
 
 ## License
 
 MIT
-

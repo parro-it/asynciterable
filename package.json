@@ -10,8 +10,7 @@
     "example.js"
   ],
   "scripts": {
-    "test": "ava && linterjs .",
-    "dev": "ava --watch & linterjs . --watch",
+    "test": "node --harmony_async_iteration -r @std/esm test.js | tap-prettify - && linterjs .",
     "start": "node -r @std/esm ./index.js",
     "doc": "documentation readme index.js --section=API"
   },
@@ -31,8 +30,10 @@
   },
   "devDependencies": {
     "@std/esm": "^0.16.0",
-    "ava": "^0.23.0",
     "documentation": "^5.3.3",
-    "linterjs": "^1.10.1"
+    "is-iterable": "^1.1.0",
+    "linterjs": "^1.11.0",
+    "tap-prettify": "0.0.2",
+    "tape-async": "^2.3.0"
   }
 }
