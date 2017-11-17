@@ -1,6 +1,6 @@
 import test from "ava";
-import $package_var from ".";
+import asynciterable from ".";
 
 test("exports a function", t => {
-  t.is(typeof $package_var, "function");
+  t.is(typeof asynciterable, "function");
 });

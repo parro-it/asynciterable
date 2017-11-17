@@ -1,3 +1,3 @@
-const $package_var = require("$package_name");
+const asynciterable = require("asynciterable");
 
-console.log({ $package_var });
+console.log({ asynciterable });
