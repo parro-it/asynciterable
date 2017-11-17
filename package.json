@@ -1,6 +1,6 @@
 {
   "name": "asynciterable",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Async iterable class",
   "repository": "parro-it/asynciterable",
   "author": "Andrea Parodi <andrea@parro.it>",
