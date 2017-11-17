@@ -33,12 +33,15 @@ export default class AsyncIterable {
   }
 
   error(err) {
+    // ? console.log({ err });
     // All previously iteration promised should be rejected
     if (this._awaitingIteration) {
+      // ? console.log("_awaitingIteration", this._awaitingIteration);
       // Resolve the awaiting iteration
       this._awaitingIteration.reject(err);
       this._awaitingIteration = null;
     }
+    // ? console.log("this._error");
     this._error = err;
   }
 
@@ -46,7 +49,15 @@ export default class AsyncIterable {
     this._chunksBuffer = [];
     this._awaitingIteration = null;
     this._ended = false;
-    factory(this.write.bind(this), this.end.bind(this), this.error.bind(this));
+
+    const write = this.write.bind(this);
+    const end = this.end.bind(this);
+    const error = this.error.bind(this);
+
+    const result = factory(write, end, error);
+    if (result && typeof result.catch === "function") {
+      result.catch(error);
+    }
   }
 
   async next() {
@@ -55,6 +66,8 @@ export default class AsyncIterable {
     }
 
     if (this._error) {
+      // ? console.log("this._error throw!");
+
       throw this._error;
     }
 

@@ -5,11 +5,52 @@ import isIterable from "is-iterable";
 function intoAsyncIterable(source) {
   if (isIterable(source)) {
     return new AsyncIterable((write, end) => {
-      source.forEach(write);
+      for (const item of source) {
+        write(item);
+      }
       end();
     });
   }
 }
+
+test("throw sync if exception in factory", async t => {
+  t.throws(
+    () =>
+      new AsyncIterable(() => {
+        throw new Error("test");
+      }),
+    Error,
+    "test"
+  );
+});
+
+test("throw async in first iteration if error called", async t => {
+  const iterable = new AsyncIterable((write, end, error) => {
+    error(new Error("test"));
+  });
+
+  const err = await (async () => {
+    for await (const _ of iterable) {
+      console.log(_);
+    }
+  })().catch(err => err);
+
+  t.is(err.message, "test");
+});
+
+test("throw async in first iteration if factory rejected", async t => {
+  const iterable = new AsyncIterable(async () => {
+    throw new Error("test");
+  });
+
+  const err = await (async () => {
+    for await (const _ of iterable) {
+      console.log(_);
+    }
+  })().catch(err => err);
+
+  t.is(err.message, "test");
+});
 
 test("write chunk async", async t => {
   const result = [];
