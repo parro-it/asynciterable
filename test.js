@@ -1,6 +1,7 @@
 import test from "tape-async";
 import AsyncIterable from ".";
 import isIterable from "is-iterable";
+import concat from "ai-concat";
 
 function intoAsyncIterable(source) {
   if (isIterable(source)) {
@@ -29,11 +30,7 @@ test("throw async in first iteration if error called", async t => {
     error(new Error("test"));
   });
 
-  const err = await (async () => {
-    for await (const _ of iterable) {
-      console.log(_);
-    }
-  })().catch(err => err);
+  const err = await iterable.next().catch(err => err);
 
   t.is(err.message, "test");
 });
@@ -43,17 +40,12 @@ test("throw async in first iteration if factory rejected", async t => {
     throw new Error("test");
   });
 
-  const err = await (async () => {
-    for await (const _ of iterable) {
-      console.log(_);
-    }
-  })().catch(err => err);
+  const err = await iterable.next().catch(err => err);
 
   t.is(err.message, "test");
 });
 
 test("write chunk async", async t => {
-  const result = [];
   const numbers = new AsyncIterable((write, end) => {
     const w = n => setTimeout(() => write(n), n * 100);
     w(3);
@@ -61,9 +53,7 @@ test("write chunk async", async t => {
     w(2);
     setTimeout(end, 400);
   });
-  for await (const n of numbers) {
-    result.push(n);
-  }
+  const result = await concat.obj(numbers);
 
   t.is(numbers._chunksBuffer.length, 0);
   t.is(numbers._awaitingIteration, null);
@@ -73,12 +63,9 @@ test("write chunk async", async t => {
 });
 
 test("write chunk sinc", async t => {
-  const result = [];
   const numbers = intoAsyncIterable([1, 2, 3]);
 
-  for await (const n of numbers) {
-    result.push(n);
-  }
+  const result = await concat.obj(numbers);
 
   t.is(numbers._chunksBuffer.length, 0);
   t.is(numbers._awaitingIteration, null);
@@ -88,11 +75,8 @@ test("write chunk sinc", async t => {
 });
 
 test("end accept a last chunk", async t => {
-  const result = [];
   const numbers = intoAsyncIterable([1, 2, 3]);
-  for await (const n of numbers) {
-    result.push(n);
-  }
+  const result = await concat.obj(numbers);
 
   t.is(numbers._chunksBuffer.length, 0);
   t.is(numbers._awaitingIteration, null);
