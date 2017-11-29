@@ -5,10 +5,7 @@
   "repository": "parro-it/asynciterable",
   "author": "Andrea Parodi <andrea@parro.it>",
   "license": "MIT",
-  "files": [
-    "index.js",
-    "example.js"
-  ],
+  "files": ["index.js", "example.js"],
   "scripts": {
     "test": "node -r @std/esm test.js | tap-colorize - && linterjs .",
     "doc": "documentation readme index.js --section=API"
@@ -17,11 +14,8 @@
     "node": ">=7"
   },
   "keywords": [],
-  "tonicExampleFilename": "example.js",
   "ava": {
-    "require": [
-      "@std/esm"
-    ]
+    "require": ["@std/esm"]
   },
   "@std/esm": {
     "esm": "js",
