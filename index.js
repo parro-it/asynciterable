@@ -1,3 +1,9 @@
+/**
+ * A class that implement the `async iterable` JavaScript pattern,
+ * using a semantic similar to the promise one.
+ *
+ *
+ */
 export default class AsyncIterable {
   write(chunk) {
     if (this._awaitingIteration) {
@@ -45,7 +51,24 @@ export default class AsyncIterable {
     this._error = err;
   }
 
-  constructor(factory) {
+  /**
+   * Create an AsyncIterable.
+   *
+   * @param {Function} executor A function that is passed with the arguments
+   * write, end, error. The executor function is executed immediately by the
+   * AsyncIterable implementation, passing write, end and error functions (the
+   * executor is called before the AsyncIterable constructor even returns the created
+   * object). The write function, when called, make the async iterable emit a new item.
+   * The end function, when called, make the async iterable end. The error function make it
+   * throw an error. The executor normally initiates some asynchronous work, and then,
+   * once a new item is available, it emit it by calling the write function,
+   * or else call the error function if an error occurred.
+   * If an error is thrown in the executor function, any subsequent call to iterator next
+   * is rejected with the same error.
+   * The return value of the executor is ignored, unless if it is a promise. In this case,
+   * when it fullfills to a rejection, error function is automatically called.
+   */
+  constructor(executor) {
     this._chunksBuffer = [];
     this._awaitingIteration = null;
     this._ended = false;
@@ -54,7 +77,7 @@ export default class AsyncIterable {
     const end = this.end.bind(this);
     const error = this.error.bind(this);
 
-    const result = factory(write, end, error);
+    const result = executor(write, end, error);
     if (result && typeof result.catch === "function") {
       result.catch(error);
     }
@@ -105,6 +128,7 @@ export default class AsyncIterable {
 
     return iteration.promise;
   }
+
   [Symbol.asyncIterator]() {
     return this;
   }

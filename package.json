@@ -5,7 +5,7 @@
   "repository": "parro-it/asynciterable",
   "author": "Andrea Parodi <andrea@parro.it>",
   "license": "MIT",
-  "files": ["index.js", "example.js"],
+  "files": ["index.js"],
   "scripts": {
     "test": "node -r @std/esm test.js | tap-colorize - && linterjs .",
     "doc": "documentation readme index.js --section=API"
